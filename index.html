@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laberinto Matemático</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="pantalla-inicial" class="pantalla-inicial">
+        <h1>¡Bienvenido al Laberinto Matemático!</h1>
+        <button id="comenzar-btn" class="btn">Comenzar Aventura</button>
+    </div>
+    <div id="pantalla-aventura" class="pantalla-aventura oculto">
+        <div class="guia">
+            <img id="personaje" src="images/personaje.png" alt="Guía">
+            <div id="texto-guia"></div>
+        </div>
+        <div class="laberinto">
+            <div class="celda start">Inicio</div>
+            <div class="celda">?</div>
+            <div class="celda">?</div>
+            <div class="celda">?</div>
+            <div class="celda">?</div>
+            <div class="celda">?</div>
+            <div class="celda end">Fin</div>
+        </div>
+        <div id="jefe-container" class="jefe-container oculto">
+            <img id="jefe-imagen" src="images/jefe1.png" alt="Jefe">
+            <div id="texto-jefe"></div>
+            <div id="pregunta-jefe"></div>
+            <input type="text" id="respuesta-jefe" class="input-respuesta">
+            <button id="enviar-respuesta-btn" class="btn">Enviar Respuesta</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
