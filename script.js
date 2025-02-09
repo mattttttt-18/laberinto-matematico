@@ -1,107 +1,48 @@
 document.addEventListener('DOMContentLoaded', () => {
     const comenzarBtn = document.getElementById('comenzar-btn');
+    const reiniciarBtn = document.getElementById('reiniciar-btn');
+    const opcionBtns = document.querySelectorAll('.opcion-btn');
+    const pantallas = document.querySelectorAll('.pantalla');
     const pantallaInicial = document.getElementById('pantalla-inicial');
-    const pantallaAventura = document.getElementById('pantalla-aventura');
-    const celdas = document.querySelectorAll('.celda');
+    const pantallaJuego = document.getElementById('pantalla-juego');
+    const pantallaFinal = document.getElementById('pantalla-final');
     const textoGuia = document.getElementById('texto-guia');
-    const jefeContainer = document.getElementById('jefe-container');
-    const jefeImagen = document.getElementById('jefe-imagen');
-    const textoJefe = document.getElementById('texto-jefe');
-    const preguntaJefe = document.getElementById('pregunta-jefe');
-    const respuestaJefe = document.getElementById('respuesta-jefe');
-    const enviarRespuestaBtn = document.getElementById('enviar-respuesta-btn');
-    let preguntasResueltas = 0;
+    const preguntaContainer = document.getElementById('pregunta-container');
+    const preguntaElemento = document.getElementById('pregunta');
+    const mensaje = document.getElementById('mensaje');
+    const iconoMensaje = document.getElementById('icono-mensaje');
+
+    let preguntas = [
+        { id: 1, pregunta: '5 + 3 = ?', opciones: ['8', '7', '6'], correcta: '8' },
+        { id: 2, pregunta: '7 - 4 = ?', opciones: ['3', '2', '1'], correcta: '3' },
+        { id: 3, pregunta: '6 x 2 = ?', opciones: ['12', '14', '16'], correcta: '12' },
+        { id: 4, pregunta: '9 / 3 = ?', opciones: ['3', '2', '1'], correcta: '3' },
+        { id: 5, pregunta: '10 - 7 = ?', opciones: ['3', '2', '1'], correcta: '3' }
+    ];
     let problemaActual = null;
-    let celdaActual = null;
+    let preguntasResueltas = 0;
+
     const historia = [
         '¡Bienvenido al laberinto matemático! Resuelve 5 problemas para completarlo.',
-        '¡Muy bien, ahora hay que vencer al siguiente!',
-        '¡Muy bien, ahora hay que vencer al siguiente!',
-        '¡Muy bien, ahora hay que vencer al siguiente!',
-        '¡Muy bien, ahora hay que vencer al siguiente!',
-        '¡Felicidades, has completado el laberinto!'
-    ];
-    const jefes = [
-        {
-            imagen: 'images/jefe1.png',
-            dialogo: 'Soy el jefe 1, resuelve mi problema para pasar.'
-        },
-        {
-            imagen: 'images/jefe2.png',
-            dialogo: 'Soy el jefe 2, resuelve mi problema para pasar.'
-        },
-        {
-            imagen: 'images/jefe3.png',
-            dialogo: 'Soy el jefe 3, resuelve mi problema para pasar.'
-        },
-        {
-            imagen: 'images/jefe4.png',
-            dialogo: 'Soy el jefe 4, resuelve mi problema para pasar.'
-        },
-        {
-            imagen: 'images/jefe5.png',
-            dialogo: 'Soy el jefe 5, resuelve mi problema para pasar.'
-        }
+        '¡Muy bien, ahora hay que resolver el siguiente problema!',
+        '¡Excelente, ya llevas dos, sigue así!',
+        '¡Perfecto, llevas tres, no te detengas!',
+        '¡Increíble, sólo falta uno más!',
+        '🎉 ¡Felicidades, has completado el laberinto matemático! 🎉'
     ];
 
-    comenzarBtn.addEventListener('click', () => {
-        pantallaInicial.classList.add('oculto');
-        pantallaInicial.addEventListener('transitionend', () => pantallaInicial.remove());
-        pantallaAventura.classList.remove('oculto');
-        mostrarTextoGuia(historia[0], 'audio/bienvenida.mp3');
-    });
+    comenzarBtn.addEventListener('click', iniciarJuego);
+    reiniciarBtn.addEventListener('click', reiniciarJuego);
+    opcionBtns.forEach(btn => btn.addEventListener('click', verificarRespuesta));
 
-    celdas.forEach(celda => {
-        celda.addEventListener('click', () => {
-            if (celda.classList.contains('start')) {
-                mostrarTextoGuia('Comienza tu aventura resolviendo el primer problema.', 'audio/comienza.mp3');
-            } else if (celda.classList.contains('end')) {
-                if (preguntasResueltas >= 5) {
-                    mostrarTextoGuia(historia[5], 'audio/fin.mp3');
-                } else {
-                    mostrarTextoGuia('Debes resolver al menos 5 problemas para llegar al final.', 'audio/debes-resolver.mp3');
-                }
-            } else if (!celda.classList.contains('resolved')) {
-                problemaActual = generarProblemaMatematico();
-                celda.classList.add('expandida');
-                celdaActual = celda;
-                mostrarJefe(preguntasResueltas, problemaActual);
-            }
-        });
-    });
-
-    enviarRespuestaBtn.addEventListener('click', () => {
-        const respuesta = parseInt(respuestaJefe.value);
-        if (respuesta === problemaActual.respuesta) {
-            celdaActual.style.backgroundColor = '#a4e5a4';
-            celdaActual.classList.add('resolved');
-            preguntasResueltas++;
-            jefeContainer.classList.add('oculto');
-            respuestaJefe.value = '';
-            if (preguntasResueltas < 5) {
-                mostrarTextoGuia(historia[preguntasResueltas], 'audio/siguiente.mp3');
-            } else {
-                mostrarTextoGuia(historia[5], 'audio/fin.mp3');
-            }
-        } else {
-            celdaActual.style.backgroundColor = '#e5a4a4';
-            mostrarTextoGuia('Respuesta incorrecta. Inténtalo de nuevo.', 'audio/incorrecta.mp3');
-        }
-        celdas.forEach(celda => celda.classList.remove('expandida'));
-    });
-
-    function generarProblemaMatematico() {
-        const num1 = Math.floor(Math.random() * 10) + 1;
-        const num2 = Math.floor(Math.random() * 10) + 1;
-        return {
-            pregunta: `${num1} + ${num2} = ?`,
-            respuesta: num1 + num2
-        };
+    function iniciarJuego() {
+        mostrarPantalla(pantallaJuego);
+        mostrarTextoGuia(historia[0]);
+        mostrarPregunta();
     }
 
-    function mostrarTextoGuia(texto, audioRuta) {
+    function mostrarTextoGuia(texto) {
         textoGuia.textContent = '';
-        const audio = new Audio(audioRuta);
         let i = 0;
         const interval = setInterval(() => {
             if (i < texto.length) {
@@ -109,28 +50,61 @@ document.addEventListener('DOMContentLoaded', () => {
                 i++;
             } else {
                 clearInterval(interval);
-                audio.play();
                 textoGuia.scrollIntoView({ behavior: 'smooth' });
             }
-        }, 30); // Aumentamos la velocidad del texto a 30ms por carácter
+        }, 30);
     }
 
-    function mostrarJefe(indice, problema) {
-        const jefe = jefes[indice];
-        jefeImagen.src = jefe.imagen;
-        textoJefe.textContent = '';
-        preguntaJefe.textContent = problema.pregunta;
-        jefeContainer.classList.remove('oculto');
-        let i = 0;
-        const interval = setInterval(() => {
-            if (i < jefe.dialogo.length) {
-                textoJefe.textContent += jefe.dialogo.charAt(i);
-                i++;
-            } else {
-                clearInterval(interval);
-                new Audio(`audio/jefe${indice + 1}.mp3`).play();
-                jefeContainer.scrollIntoView({ behavior: 'smooth' });
-            }
-        }, 30); // Aumentamos la velocidad del texto a 30ms por carácter
+    function mostrarPregunta() {
+        do {
+            problemaActual = preguntas[Math.floor(Math.random() * preguntas.length)];
+        } while (problemaActual.usada);
+        problemaActual.usada = true;
+
+        preguntaElemento.textContent = problemaActual.pregunta;
+        opcionBtns.forEach((btn, index) => {
+            btn.textContent = problemaActual.opciones[index];
+        });
+        mensaje.textContent = '';
+        iconoMensaje.classList.add('oculto');
+        preguntaContainer.classList.remove('oculto');
     }
+
+    function verificarRespuesta(event) {
+        const respuesta = event.target.textContent;
+        if (respuesta === problemaActual.correcta) {
+            mensaje.textContent = '¡Correcto!';
+            mensaje.style.color = '#00ff00';
+            iconoMensaje.src = 'images/correcto.png';
+            iconoMensaje.classList.remove('oculto');
+            preguntasResueltas++;
+            if (preguntasResueltas < 5) {
+                mostrarTextoGuia(historia[preguntasResueltas]);
+                setTimeout(mostrarPregunta, 1000);
+            } else {
+                setTimeout(finalizarJuego, 1000);
+            }
+        } else {
+            mensaje.textContent = 'Incorrecto. Inténtalo de nuevo.';
+            mensaje.style.color = '#ff4500';
+            iconoMensaje.src = 'images/incorrecto.png';
+            iconoMensaje.classList.remove('oculto');
+        }
+    }
+
+    function finalizarJuego() {
+        mostrarPantalla(pantallaFinal);
+    }
+
+    function mostrarPantalla(pantalla) {
+        pantallas.forEach(p => p.classList.remove('activa'));
+        pantalla.classList.add('activa');
+    }
+
+    function reiniciarJuego() {
+        location.reload();
+    }
+
+    // Iniciar en pantalla inicial
+    mostrarPantalla(pantallaInicial);
 });
