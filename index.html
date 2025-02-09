@@ -7,31 +7,40 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="pantalla-inicial" class="pantalla-inicial">
-        <h1>¡Bienvenido al Laberinto Matemático!</h1>
+    <div id="pantalla-inicial" class="pantalla">
+        <h1>🧮 ¡Bienvenido al Laberinto Matemático! 🧮</h1>
         <button id="comenzar-btn" class="btn">Comenzar Aventura</button>
     </div>
-    <div id="pantalla-aventura" class="pantalla-aventura oculto">
+    <div id="pantalla-juego" class="pantalla oculto">
         <div class="guia">
             <img id="personaje" src="images/personaje.png" alt="Guía">
             <div id="texto-guia"></div>
         </div>
-        <div class="laberinto">
-            <div class="celda start">Inicio</div>
-            <div class="celda">?</div>
-            <div class="celda">?</div>
-            <div class="celda">?</div>
-            <div class="celda">?</div>
-            <div class="celda">?</div>
-            <div class="celda end">Fin</div>
+        <div id="laberinto-container" class="laberinto-container">
+            <div id="cubos-container" class="cubos-container">
+                <!-- Cubos del laberinto -->
+                <div class="cubo cubo1">1</div>
+                <div class="cubo cubo2">2</div>
+                <div class="cubo cubo3">3</div>
+                <div class="cubo cubo4">4</div>
+                <div class="cubo cubo5">5</div>
+            </div>
         </div>
-        <div id="jefe-container" class="jefe-container oculto">
-            <img id="jefe-imagen" src="images/jefe1.png" alt="Jefe">
-            <div id="texto-jefe"></div>
-            <div id="pregunta-jefe"></div>
-            <input type="text" id="respuesta-jefe" class="input-respuesta">
-            <button id="enviar-respuesta-btn" class="btn">Enviar Respuesta</button>
+        <div id="pregunta-container" class="pregunta-container oculto">
+            <div id="pregunta" class="pregunta"></div>
+            <div id="opciones" class="opciones">
+                <!-- Botones de opciones -->
+                <button class="btn opcion-btn">Opción 1</button>
+                <button class="btn opcion-btn">Opción 2</button>
+                <button class="btn opcion-btn">Opción 3</button>
+            </div>
+            <div id="mensaje" class="mensaje"></div>
+            <img id="icono-mensaje" class="icono-mensaje oculto">
         </div>
+    </div>
+    <div id="pantalla-final" class="pantalla oculto">
+        <h1>🎉 ¡Felicidades, has completado el laberinto matemático! 🎉</h1>
+        <button id="reiniciar-btn" class="btn">Reiniciar Juego</button>
     </div>
     <script src="script.js"></script>
 </body>
